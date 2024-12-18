@@ -1,129 +1,103 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
-class Task {
-    int id;
-    String title;
-    String description;
-    boolean completed;
-
-    Task(int id, String title, String description) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.completed = false;
-    }
-
-    @Override
-    public String toString() {
-        return "ID: " + id + "\nTitle: " + title + "\nDescription: " + description + "\nCompleted: " + completed;
-    }
-}
-
 public class TaskManager {
-    private static ArrayList<Task> tasks = new ArrayList<>();
-    private static int idCounter = 1;
+
+    // List to store tasks
+    private static ArrayList<String> tasks = new ArrayList<>();
+    // List to store completed tasks
+    private static ArrayList<String> completedTasks = new ArrayList<>();
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        int choice;
 
-        do {
-            System.out.println("\n--- Task Manager ---");
-            System.out.println("1. Add Task");
-            System.out.println("2. View Tasks");
-            System.out.println("3. Update Task");
-            System.out.println("4. Delete Task");
+        System.out.println("Welcome to Task Manager!");
+
+        // Loop for the main menu
+        while (true) {
+            // Show the user options
+            System.out.println("\nChoose an option:");
+            System.out.println("1. Add a new task");
+            System.out.println("2. View tasks");
+            System.out.println("3. Mark a task as completed");
+            System.out.println("4. View completed tasks");
             System.out.println("5. Exit");
-            System.out.print("Enter your choice: ");
-            choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+
+            // Get the user's choice
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline character
 
             switch (choice) {
-                case 1 -> addTask(scanner);
-                case 2 -> viewTasks();
-                case 3 -> updateTask(scanner);
-                case 4 -> deleteTask(scanner);
-                case 5 -> System.out.println("Exiting Task Manager. Goodbye!");
-                default -> System.out.println("Invalid choice. Please try again.");
+                case 1: // Add a new task
+                    addTask(scanner);
+                    break;
+                case 2: // View all tasks
+                    viewTasks();
+                    break;
+                case 3: // Mark a task as completed
+                    markAsCompleted(scanner);
+                    break;
+                case 4: // View completed tasks
+                    viewCompletedTasks();
+                    break;
+                case 5: // Exit
+                    System.out.println("Goodbye!");
+                    return; // Exit the program
+                default:
+                    System.out.println("Invalid choice. Please try again.");
             }
-        } while (choice != 5);
-
-        scanner.close();
+        }
     }
 
-    private static void addTask(Scanner scanner) {
-        System.out.print("Enter task title: ");
-        String title = scanner.nextLine();
-        System.out.print("Enter task description: ");
-        String description = scanner.nextLine();
-
-        tasks.add(new Task(idCounter++, title, description));
-        System.out.println("Task added successfully!");
+    // Method to add a task
+    public static void addTask(Scanner scanner) {
+        System.out.print("Enter the task description: ");
+        String task = scanner.nextLine();
+        tasks.add(task);
+        System.out.println("Task added: " + task);
     }
 
-    private static void viewTasks() {
+    // Method to view all tasks
+    public static void viewTasks() {
         if (tasks.isEmpty()) {
             System.out.println("No tasks available.");
-            return;
-        }
-
-        System.out.println("\n--- Task List ---");
-        for (Task task : tasks) {
-            System.out.println(task);
-            System.out.println("----------------");
-        }
-    }
-
-    private static void updateTask(Scanner scanner) {
-        System.out.print("Enter task ID to update: ");
-        int id = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
-
-        Task task = findTaskById(id);
-        if (task == null) {
-            System.out.println("Task not found.");
-            return;
-        }
-
-        System.out.print("Enter new title (leave blank to keep unchanged): ");
-        String title = scanner.nextLine();
-        if (!title.isEmpty()) {
-            task.title = title;
-        }
-
-        System.out.print("Enter new description (leave blank to keep unchanged): ");
-        String description = scanner.nextLine();
-        if (!description.isEmpty()) {
-            task.description = description;
-        }
-
-        System.out.print("Is the task completed? (true/false): ");
-        task.completed = scanner.nextBoolean();
-
-        System.out.println("Task updated successfully!");
-    }
-
-    private static void deleteTask(Scanner scanner) {
-        System.out.print("Enter task ID to delete: ");
-        int id = scanner.nextInt();
-
-        Task task = findTaskById(id);
-        if (task == null) {
-            System.out.println("Task not found.");
-            return;
-        }
-
-        tasks.remove(task);
-        System.out.println("Task deleted successfully!");
-    }
-
-    private static Task findTaskById(int id) {
-        for (Task task : tasks) {
-            if (task.id == id) {
-                return task;
+        } else {
+            System.out.println("\nYour tasks:");
+            for (int i = 0; i < tasks.size(); i++) {
+                System.out.println((i + 1) + ". " + tasks.get(i));
             }
         }
-        return null;
+    }
+
+    // Method to mark a task as completed
+    public static void markAsCompleted(Scanner scanner) {
+        if (tasks.isEmpty()) {
+            System.out.println("No tasks available to mark as completed.");
+            return;
+        }
+
+        System.out.print("Enter the task number to mark as completed: ");
+        int taskNumber = scanner.nextInt();
+        scanner.nextLine(); // Consume newline character
+
+        if (taskNumber > 0 && taskNumber <= tasks.size()) {
+            String completedTask = tasks.remove(taskNumber - 1);
+            completedTasks.add(completedTask);
+            System.out.println("Task completed: " + completedTask);
+        } else {
+            System.out.println("Invalid task number.");
+        }
+    }
+
+    // Method to view completed tasks
+    public static void viewCompletedTasks() {
+        if (completedTasks.isEmpty()) {
+            System.out.println("No tasks have been completed yet.");
+        } else {
+            System.out.println("\nCompleted tasks:");
+            for (String task : completedTasks) {
+                System.out.println(task);
+            }
+        }
     }
 }
